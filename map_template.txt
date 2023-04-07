@@ -1,0 +1,21 @@
+HHHHHHHHHHHHHHHHHHH
+V        V        V
+V HH HHH V HHH HH V
+V                 V
+V HH V HHHHH V HH V
+V    V   V   V    V
+VHHH VHH V HHV HHHH
+   V V       V V   
+HHHH V HHHHH V HHHH
+V      V   V       
+HHHH V HHHHH V HHHH
+   V V       V V   
+HHHH V HHHHH V HHHH
+V        V        V
+V HH HHH V HHH HH V
+V  V           V  V
+VH V V HHHHH V V HV
+V    V   V   V    V
+V HHHHHH V HHHHHH V
+V                 V
+HHHHHHHHHHHHHHHHHHH
