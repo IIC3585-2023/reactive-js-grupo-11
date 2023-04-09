@@ -3,7 +3,7 @@ import { ticker } from "./basicStreams.js";
 import { draw } from "./drawer.js";
 import { TILE_SIZE } from "./constants.js";
 import { createGhost } from "./ghosts.js";
-import { resolvePlayerPosition, solveCollisionDot } from "./utils.js";
+import { collisionPlayerGhost, resolvePlayerPosition, solveCollisionDot } from "./utils.js";
 
 
 let dotMap = [
@@ -136,8 +136,8 @@ const ghostSprites = [
 
 const intialGameState = {
     players: [
-        p1InitialState,
-        p2InitialState
+        structuredClone(p1InitialState),
+        structuredClone(p2InitialState),
     ],
     ghosts: [
         ghost1InitialState,
@@ -159,12 +159,23 @@ dotImage.onload = () => {
         // quiza con un merge o algo asi
         rxjs.withLatestFrom(p1Data.directionStream, p2Data.directionStream, ghostDataStream),
         rxjs.scan((previousGameState, [tick, p1Direction, p2Direction, ghostStates]) => {
-            resolvePlayerPosition(previousGameState, p1Direction, 0)
-            resolvePlayerPosition(previousGameState, p2Direction, 1)
-            previousGameState.ghosts = ghostStates
-            return previousGameState
 
-        }, intialGameState)
+            const gameState = previousGameState
+
+            resolvePlayerPosition(gameState, p1Direction, 0)
+            resolvePlayerPosition(gameState, p2Direction, 1)
+            gameState.ghosts = ghostStates
+
+            solveCollisionDot(gameState, dotMap);
+
+            const newPositions = gameState.players.map((player, idx) => {
+                return collisionPlayerGhost(player, gameState.ghosts) ? intialGameState.players[idx].position : player.position          
+            })
+            
+            newPositions.forEach((pos, idx) => gameState.players[idx].position = pos);
+            return gameState
+
+        }, structuredClone(intialGameState))
     ).subscribe({
         next: (gameState) => {
             const p1Info = {
@@ -187,9 +198,6 @@ dotImage.onload = () => {
                 }
             })
 
-            solveCollisionDot(gameState, dotMap);
-            console.log("1: ", gameState.players[0].score);
-            console.log("2: ", gameState.players[1].score);
             draw([p1Info, p2Info], ghostsInfo, dotMap, {dotImage: dotImage})
         },
         error: console.log

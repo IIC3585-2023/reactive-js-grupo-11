@@ -67,3 +67,17 @@ export const solveCollisionDot = (gameState, dotMap) => {
         }
     });
 }
+
+export const collisionPlayerGhost = (player, ghosts) => {
+    const playerX = player.position.x;
+    const playerY = player.position.y;
+    const ghostCollisions = ghosts.map((ghost) => {
+        return (
+            playerX < ghost.position.x + TILE_SIZE &&
+            playerX + TILE_SIZE > ghost.position.x &&
+            playerY < ghost.position.y + TILE_SIZE &&
+            playerY + TILE_SIZE > ghost.position.y
+        )
+    })
+    return ghostCollisions.reduce((prev, curr) => curr || prev, false)
+}
