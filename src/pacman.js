@@ -1,9 +1,9 @@
-import { SPEED, walls } from "./constants.js";
-import { keyPresses, ticker } from "./basicStreams.js";
-import { checkCollision } from "./utils.js";
+// import { SPEED, walls } from "./constants.js";
+import { keyPresses } from "./basicStreams.js";
+// import { checkCollision } from "./utils.js";
 
 
-export const createPlayer = (playerKeys, initialState, playerNumber) => {
+export const createPlayer = (playerKeys, /*initialState,*/ playerNumber) => {
     // Direction Stream
     const playerDirectionStream = keyPresses.pipe(
         rxjs.filter(event => playerKeys.movement.includes(event.code)),
@@ -30,31 +30,6 @@ export const createPlayer = (playerKeys, initialState, playerNumber) => {
         rxjs.startWith({x: 0, y: 0})
     )
 
-    // Player Position Stream
-    const playerPositionStream = ticker.pipe(
-        rxjs.withLatestFrom(playerDirectionStream),
-        rxjs.scan((previousState, [tick, direction]) => {
-            const desiredNextState = {
-                position: {
-                    x: previousState.position.x + direction.x * SPEED,
-                    y: previousState.position.y + direction.y * SPEED,
-                },
-                direction: direction
-            }
-            const previousDirectionNextState = {
-                position: {
-                    x: previousState.position.x + previousState.direction.x * SPEED,
-                    y: previousState.position.y + previousState.direction.y * SPEED 
-                },
-                direction: previousState.direction
-            }
-            // TODO: IF COLISION RETURN LAST ELSE RETURN NEW
-            return checkCollision(desiredNextState.position, walls) ? (
-                        checkCollision(previousDirectionNextState.position, walls) ? previousState : previousDirectionNextState) :
-                        desiredNextState
-        }, initialState),
-    )
-
     // Shoot Stream
     const shootStream = keyPresses.pipe(
         rxjs.filter(event => playerKeys.shoot === event.code),
@@ -64,5 +39,5 @@ export const createPlayer = (playerKeys, initialState, playerNumber) => {
     let img = new Image();
     img.src = `../assets/sprites/pacman/pacman${playerNumber}.png`;
 
-    return {positionStream: playerPositionStream, shootStream: shootStream, sprite: img}
+    return {directionStream: playerDirectionStream, shootStream: shootStream, sprite: img}
 }

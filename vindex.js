@@ -103,17 +103,73 @@ const ghostSprites = [
     ghost4Data.sprite
 ]
 
+const intialGameState = {
+    players: [
+        {
+            score: 0,
+            position: {
+                x: 1 * TILE_SIZE,
+                y: 1 * TILE_SIZE
+            },
+            direction: {
+                x: 0,
+                y: 0
+            },
+            state: 'normal'
+        }, {
+            score: 0,
+            position: {
+                x: 19 * TILE_SIZE,
+                y: 1 * TILE_SIZE
+            },
+            direction: {
+                x: 0,
+                y: 0
+            },
+            state: 'normal'
+        }
+    ]
+}
+
 // Buscar donde hace sentido que este esta imagen, quiza
 // agregamos un file que tenga todas las imagenes y les
 // haga load o algo asi
 const dotImage = new Image()
 dotImage.src = 'assets/tiles/dot.png'
 
+// Player Position Stream
+// const playerPositionStream = ticker.pipe(
+//     rxjs.withLatestFrom(playerDirectionStream),
+//     rxjs.scan((previousState, [tick, direction]) => {
+//         const desiredNextState = {
+//             position: {
+//                 x: previousState.position.x + direction.x * SPEED,
+//                 y: previousState.position.y + direction.y * SPEED,
+//             },
+//             direction: direction
+//         }
+//         const previousDirectionNextState = {
+//             position: {
+//                 x: previousState.position.x + previousState.direction.x * SPEED,
+//                 y: previousState.position.y + previousState.direction.y * SPEED 
+//             },
+//             direction: previousState.direction
+//         }
+//         // TODO: IF COLISION RETURN LAST ELSE RETURN NEW
+//         return checkCollision(desiredNextState.position, walls) ? (
+//                     checkCollision(previousDirectionNextState.position, walls) ? previousState : previousDirectionNextState) :
+//                     desiredNextState
+//     }, initialState),
+// )
+
 dotImage.onload = () => {
     ticker.pipe(
         // Despues, agregar el shoot stream, pero no con withlatestfrom,
         // quiza con un merge o algo asi
-        rxjs.withLatestFrom(p1Data.positionStream, p2Data.positionStream, ghostDataStream),
+        rxjs.withLatestFrom(p1Data.directionStream, p2Data.directionStream, ghostDataStream),
+        rxjs.scan((previousGameState, [tick, p1Direction, p2Direction, ghostStates]) => {
+            const p1Position = resolvePlayerPosition(gameState, p1Direction)
+        }, intialGameState)
     ).subscribe({
         next: ([tick, p1State, p2State, ghostStates]) => {
             const p1Info = {

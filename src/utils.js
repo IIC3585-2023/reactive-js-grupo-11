@@ -1,4 +1,4 @@
-import { TILE_SIZE } from "./constants"
+import { TILE_SIZE, SPEED, walls } from "./constants"
 
 
 export const checkCollision = (playerPos, map) => {
@@ -27,4 +27,28 @@ export const checkCollision = (playerPos, map) => {
         }
     }
     return false
+}
+
+export const resolvePlayerPosition = (gameState, direction, playerNumber) => {
+    const previousState = gameState.players[playerNumber]
+    const desiredNextState = {
+        position: {
+            x: previousState.position.x + direction.x * SPEED,
+            y: previousState.position.y + direction.y * SPEED,
+        },
+        direction: direction,
+    }
+    const previousDirectionNextState = {
+        position: {
+            x: previousState.position.x + previousState.direction.x * SPEED,
+            y: previousState.position.y + previousState.direction.y * SPEED 
+        },
+        direction: previousState.direction
+    }
+    // TODO: IF COLISION RETURN LAST ELSE RETURN NEW
+    const nextPosition = checkCollision(desiredNextState.position, walls) ? (
+                            checkCollision(previousDirectionNextState.position, walls) ? previousState : previousDirectionNextState) :
+                            desiredNextState
+    gameState.players[playerNumber].position = nextPosition.position
+    gameState.players[playerNumber].direction = nextPosition.direction
 }

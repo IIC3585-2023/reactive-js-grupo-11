@@ -3,6 +3,7 @@ import { ticker } from "./basicStreams.js";
 import { draw } from "./drawer.js";
 import { TILE_SIZE } from "./constants.js";
 import { createGhost } from "./ghosts.js";
+import { resolvePlayerPosition } from "./utils.js";
 
 
 // DEFINE PLAYERS
@@ -19,7 +20,9 @@ const p1InitialState = {
     direction: {
         x: 0,
         y: 0
-    }
+    },
+    score: 0,
+    state: 'normal'
 }
 
 const p2Keys = {
@@ -35,11 +38,13 @@ const p2InitialState = {
     direction: {
         x: 0,
         y: 0
-    }
+    },
+    score: 0,
+    state: 'normal'
 }
 
-const p1Data = createPlayer(p1Keys, p1InitialState, 1)
-const p2Data = createPlayer(p2Keys, p2InitialState, 2)
+const p1Data = createPlayer(p1Keys, /*p1InitialState,*/ 1)
+const p2Data = createPlayer(p2Keys, /*p2InitialState,*/ 2)
 
 
 // DEFINE GHOSTS
@@ -103,6 +108,19 @@ const ghostSprites = [
     ghost4Data.sprite
 ]
 
+const intialGameState = {
+    players: [
+        p1InitialState,
+        p2InitialState
+    ],
+    ghosts: [
+        ghost1InitialState,
+        ghost2InitialState,
+        ghost3InitialState,
+        ghost4InitialState
+    ]
+}
+
 // Buscar donde hace sentido que este esta imagen, quiza
 // agregamos un file que tenga todas las imagenes y les
 // haga load o algo asi
@@ -113,33 +131,37 @@ dotImage.onload = () => {
     ticker.pipe(
         // Despues, agregar el shoot stream, pero no con withlatestfrom,
         // quiza con un merge o algo asi
-        rxjs.withLatestFrom(p1Data.positionStream, p2Data.positionStream, ghostDataStream),
+        rxjs.withLatestFrom(p1Data.directionStream, p2Data.directionStream, ghostDataStream),
+        rxjs.scan((previousGameState, [tick, p1Direction, p2Direction, ghostStates]) => {
+            resolvePlayerPosition(previousGameState, p1Direction, 0)
+            resolvePlayerPosition(previousGameState, p2Direction, 1)
+            previousGameState.ghosts = ghostStates
+            return previousGameState
+
+        }, intialGameState)
     ).subscribe({
-        next: ([tick, p1State, p2State, ghostStates]) => {
+        next: (gameState) => {
             const p1Info = {
-                position: p1State.position,
-                direction: p1State.direction,
+                position: gameState.players[0].position,
+                direction: gameState.players[0].direction,
                 sprite: p1Data.sprite
             }
 
             const p2Info = {
-                position: p2State.position,
-                direction: p2State.direction,
+                position: gameState.players[1].position,
+                direction: gameState.players[1].direction,
                 sprite: p2Data.sprite
             }
 
-            const ghostsInfo = ghostStates.map( (state, idx) => {
+            const ghostsInfo = gameState.ghosts.map( (state, idx) => {
                 return {
                     position: state.position,
                     direction: state.direction,
                     sprite: ghostSprites[idx]
                 }
             })
-
             draw([p1Info, p2Info], ghostsInfo, {dotImage: dotImage})
         },
         error: console.log
     })
 }
-
-
