@@ -21,59 +21,6 @@ const ctx = canvas.getContext("2d")
 //map height = 600
 //map width = ?
 
-const walls = [
-
-    [40, 0, 5, 210],   //Left Upper outer wall
-
-    [40, 210, 70, 5],
-
-    [110, 210, 5, 70],
-
-    [40, 280, 70, 5],
-
-    [40, 280, 5, 70], //Left Middle outer wall
-
-    [40, 350, 70, 5],
-
-    [110, 350, 5, 70],
-
-    [40, 420, 70, 5],
-
-    [40, 420, 5, 210], //Left Lower outer wall
-
-    [40, 0, 700, 5],
-
-    [740, 0, 5, 210],
-
-    [670, 210, 70, 5],
-
-    [670, 210, 5, 70],
-
-    [670, 280, 70, 5],
-
-    [670, 280, 70, 5],
-
-    [740, 280, 5, 70],
-
-    [670, 350, 70, 5],
-
-    [670, 350, 5, 70],
-
-    [670, 420, 70, 5],
-
-    [740, 420, 5, 210],
-
-    [40, 630, 700, 5]
-
-    //Inner Elements
-]
-
-walls.forEach(wall => {
-    ctx.rect(...wall)
-})
-ctx.stroke()
-
-
 const ghost_img = new Image()
 ghost_img.src = 'assets/sprites/ghosts/blue_ghost.png'
 ghost_img.onload = () => {
@@ -156,3 +103,72 @@ const drawGhost = (value) => {
 //     next: draw_ghost,
 //     complete: () => console.log('complete')
 // })
+
+walls = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+    [1, 3, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 3, 1],
+    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1],
+    [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
+    [1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1],
+    [1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1],
+    [1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1],
+    [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
+    [1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 1, 2, 1],
+    [1, 3, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 3, 1],
+    [1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 1, 1],
+    [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1],
+    [1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
+
+//Ver como cambiar esto
+let loadedImages = false
+
+const tileSize = 30
+const bigTileDifference = 10
+
+function loadImage(imagePath) {
+    return new Promise(r => { let i = new Image(); i.onload = (() => r(i)); i.src = imagePath; });
+}
+
+function loadImages(imagePathList){
+    return Promise.all(imagePathList.map(imagePath => loadImage(imagePath)));
+}
+
+async function drawMap (imagesPathList, wallArray){
+    if(!loadedImages) loadedImages = await loadImages(imagesPathList)
+
+    //Image for yellow dots
+    dotImage = loadedImages[0];
+
+    ctx.fillStyle = "#000075";
+
+    for(row = 0; row < wallArray.length; row++){
+        for(col = 0; col < wallArray[row].length; col ++){
+            // console.log(row, col, walls[row][col], walls.length, walls[row].length)
+            if(wallArray[row][col] == 1){
+                ctx.fillRect(col*tileSize, row*tileSize, tileSize, tileSize)
+            }
+            if(wallArray[row][col] == 2){
+                ctx.drawImage(dotImage, col*tileSize + bigTileDifference/2, row*tileSize + bigTileDifference/2, 
+                            tileSize - bigTileDifference, tileSize - bigTileDifference);
+            }
+            if(wallArray[row][col] == 3){
+                ctx.drawImage(dotImage, col*tileSize - bigTileDifference/2, row*tileSize - bigTileDifference/2,
+                             tileSize + bigTileDifference/2, tileSize + bigTileDifference/2);
+            }
+        }
+    }
+    // ctx.stroke()
+}
+
+drawMap(['Tiles/dot.png'], walls)
