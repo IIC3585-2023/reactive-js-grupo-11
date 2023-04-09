@@ -1,7 +1,7 @@
 // import { TILE_SIZE } from "./constants"
 
 
-const checkColision = (playerPos, map) => {
+const checkCollision = (playerPos, map) => {
 
     const rec1_x = playerPos.x
     const rec1_y = playerPos.y

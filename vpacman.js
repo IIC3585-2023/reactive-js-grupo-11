@@ -1,6 +1,6 @@
 // import { SPEED, walls } from "./constants.js";
 // import { keyPresses, ticker } from "./basicStreams.js";
-// import { checkColision } from "./utils.js";
+// import { checkCollision } from "./utils.js";
 
 
 const createPlayer = (playerKeys, initialState, playerNumber) => {
@@ -49,10 +49,10 @@ const createPlayer = (playerKeys, initialState, playerNumber) => {
                 direction: previousState.direction
             }
             // TODO: IF COLISION RETURN LAST ELSE RETURN NEW
-            return checkColision(desiredNextState.position, walls) ? (
-                        checkColision(previousDirectionNextState.position, walls) ? previousState : previousDirectionNextState) :
+            return checkCollision(desiredNextState.position, walls) ? (
+                        checkCollision(previousDirectionNextState.position, walls) ? previousState : previousDirectionNextState) :
                         desiredNextState
-        }, initialState)
+        }, initialState),
     )
 
     // Shoot Stream

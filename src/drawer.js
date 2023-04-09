@@ -39,6 +39,13 @@ const drawPlayers = (playersInformation) => {
     })
 }
 
+const drawGhosts = (ghostsInformation) => {
+    ghostsInformation.forEach( (ghostInfo) => {
+        const {position, direction, sprite} = ghostInfo
+        ctx.drawImage(sprite, position.x, position.y, TILE_SIZE, TILE_SIZE)
+    })
+}
+
 const drawMap = (tiles, walls) => {
     const dotImage = tiles.dotImage
     ctx.fillStyle = "#000075";
@@ -60,8 +67,9 @@ const drawMap = (tiles, walls) => {
     }
 }
 
-export const draw = (playersInformation, tiles) => {
+export const draw = (playersInformation, ghostsInformation, tiles) => {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
     drawMap(tiles, walls)
     drawPlayers(playersInformation)
+    drawGhosts(ghostsInformation)
 }
