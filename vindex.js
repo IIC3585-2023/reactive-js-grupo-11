@@ -46,18 +46,20 @@ dotImage.src = 'assets/tiles/dot.png'
 
 dotImage.onload = () => {
     ticker.pipe(
+        // Despues, agregar el shoot stream, pero no con withlatestfrom,
+        // quiza con un merge o algo asi
         rxjs.withLatestFrom(p1Data.positionStream, p2Data.positionStream),
     ).subscribe({
-        next: ([tick, p1Position, p2Position]) => {
+        next: ([tick, p1State, p2State]) => {
             const p1Info = {
-                x: p1Position.x,
-                y: p1Position.y,
+                position: p1State.position,
+                direction: p1State.direction,
                 sprite: p1Data.sprite
             }
 
             const p2Info = {
-                x: p2Position.x,
-                y: p2Position.y,
+                position: p2State.position,
+                direction: p2State.direction,
                 sprite: p2Data.sprite
             }
 

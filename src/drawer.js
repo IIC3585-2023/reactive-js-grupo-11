@@ -3,18 +3,39 @@ import { TILE_SIZE, bigTileDifference, walls } from "./constants"
 const canvas = document.getElementById('pacman')
 const ctx = canvas.getContext("2d")
 
+const getRotationAngle = (direction) => {
+    const {x, y} = direction
+    const angleX = x === -1 ? Math.PI : 0
+    const angleY = y === -1 ? Math.PI * (3 / 2) : y === 1 ? Math.PI / 2 : 0
+    return angleX + angleY
+}
+
 /**
 PlayersInformation = 
 [
-  {x: ..., y: ..., sprite: link1},
-  {x: ..., y: ..., sprite: link2},
-  ...
+    {
+        position: {
+            x: ...,
+            y: ...
+        },
+        direction: {
+            x: ...,
+            y: ...
+        },
+        sprite: link1},
+    },
+    ...
 ]
 */
 const drawPlayers = (playersInformation) => {
     playersInformation.forEach( (playerInfo) => {
-        const {x, y, sprite} = playerInfo
-        ctx.drawImage(sprite, x, y, TILE_SIZE, TILE_SIZE)
+        ctx.save()
+        const {position, direction, sprite} = playerInfo
+        ctx.translate(position.x + TILE_SIZE / 2, position.y + TILE_SIZE / 2)
+        ctx.rotate(getRotationAngle(direction))
+        ctx.translate(- (position.x + TILE_SIZE / 2), - (position.y + TILE_SIZE / 2))
+        ctx.drawImage(sprite, position.x, position.y, TILE_SIZE, TILE_SIZE)
+        ctx.restore()
     })
 }
 

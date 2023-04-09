@@ -30,12 +30,6 @@ const createPlayer = (playerKeys, initialState, playerNumber) => {
         rxjs.startWith({x: 0, y: 0})
     )
 
-    // const validDirectionStream = playerDirectionStream.pipe(
-    //     rxjs.scan((previousDirection, newDirection) => {
-
-    //     })
-    // )
-
     // Player Position Stream
     const playerPositionStream = ticker.pipe(
         rxjs.withLatestFrom(playerDirectionStream),
@@ -58,8 +52,7 @@ const createPlayer = (playerKeys, initialState, playerNumber) => {
             return checkColision(desiredNextState.position, walls) ? (
                         checkColision(previousDirectionNextState.position, walls) ? previousState : previousDirectionNextState) :
                         desiredNextState
-        }, initialState),
-        rxjs.map(event => event.position)
+        }, initialState)
     )
 
     // Shoot Stream
