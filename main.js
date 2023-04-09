@@ -24,7 +24,7 @@ const ctx = canvas.getContext("2d")
 const ghost_img = new Image()
 ghost_img.src = 'assets/sprites/ghosts/blue_ghost.png'
 ghost_img.onload = () => {
-    ctx.drawImage(ghost_img, 100, 100, 25, 25)
+    ctx.drawImage(ghost_img, 0, 0, 30, 30)
 }
 
 // KEY PRESSES
@@ -44,7 +44,7 @@ const keyPresses = keyDowns
   )
 
 // GAME TICKER
-const TICKER_INTERVAL = 20
+const TICKER_INTERVAL = 500
 const ticker = interval(TICKER_INTERVAL)
 
 
@@ -71,7 +71,7 @@ const p1Direction = p1KeyPresses.pipe(
 )
 
 const P1Speed = {x: 5, y: 5}
-const initialP1Position = {x: 100, y: 100}
+const initialP1Position = {x: 30, y: 30}
 
 const p1Position = ticker.pipe(
     withLatestFrom(p1Direction),
@@ -84,6 +84,8 @@ const p1Position = ticker.pipe(
 ).subscribe({
     next: (value) => {
         drawGhost(value)
+        drawMap(['Tiles/dot.png'], walls)
+        console.log(value.x, value.y, checkColision(value, walls))
     },
     error: console.log
 })
@@ -98,11 +100,6 @@ const drawGhost = (value) => {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
     ctx.drawImage(ghost_img, value.x, value.y, 25, 25)
 }
-
-// interval(10).subscribe({
-//     next: draw_ghost,
-//     complete: () => console.log('complete')
-// })
 
 walls = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -142,6 +139,34 @@ function loadImage(imagePath) {
 
 function loadImages(imagePathList){
     return Promise.all(imagePathList.map(imagePath => loadImage(imagePath)));
+}
+
+function checkColision(ghostPos, map){
+
+    rec1_x = ghostPos.x
+    rec1_y = ghostPos.y
+    rec1_w = tileSize
+    rec1_h = tileSize
+
+    for(row = 0; row < map.length; row++){
+        for(col = 0; col < map[row].length; col++){
+
+            if(map[row][col] != 1) continue
+
+            rec2_x = col*tileSize
+            rec2_y = row*tileSize
+            rec2_w = tileSize
+            rec2_h = tileSize
+
+            if(
+                rec1_x < rec2_x + rec2_w &&
+                rec1_x + rec1_w > rec2_x &&
+                rec1_y < rec2_y + rec2_h &&
+                rec1_y + rec1_h > rec2_y
+            ) return true
+        }
+    }
+    return false
 }
 
 async function drawMap (imagesPathList, wallArray){
