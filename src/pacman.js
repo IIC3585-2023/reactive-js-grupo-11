@@ -3,10 +3,11 @@ import { keyPresses } from "./basicStreams.js";
 // import { checkCollision } from "./utils.js";
 
 
-export const createPlayer = (playerKeys, /*initialState,*/ playerNumber) => {
+export const createPlayer = (playerKeys, initialDirection, playerNumber) => {
     // Direction Stream
     const playerDirectionStream = keyPresses.pipe(
         rxjs.filter(event => playerKeys.movement.includes(event.code)),
+        rxjs.filter(event => event.type === 'keydown'),
         rxjs.operators.map((event) => {
             const idx = playerKeys.movement.indexOf(event.code)
             switch(idx) {
@@ -27,13 +28,13 @@ export const createPlayer = (playerKeys, /*initialState,*/ playerNumber) => {
                     return {x: 0, y: 0}
             }
         }),
-        rxjs.startWith({x: 0, y: 0})
+        rxjs.startWith(initialDirection)
     )
 
     // Shoot Stream
     const shootStream = keyPresses.pipe(
         rxjs.filter(event => playerKeys.shoot === event.code),
-        rxjs.throttleTime(1000)
+        rxjs.startWith({type : "null"})
     )
 
     let img = new Image();

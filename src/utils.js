@@ -1,4 +1,4 @@
-import { TILE_SIZE, SPEED, walls } from "./constants"
+import { TILE_SIZE, SPEED, walls, PROJECTILE_SPEED, SHOOT_COOLDOWN } from "./constants"
 
 
 const checkCollision = (tileType, returnPos) => (playerPos, map) => {
@@ -80,4 +80,49 @@ export const collisionPlayerGhost = (player, ghosts) => {
         )
     })
     return ghostCollisions.reduce((prev, curr) => curr || prev, false)
+}
+
+export const resolveShootEvents = ([ticker, ...shootStreams], gameState) => {
+    let projectiles = shootStreams.map((shootStream, idx) => {
+        if(shootStream.type !== "keydown") return false;
+        if(gameState.players[idx].shootCooldown !== 0) return false
+        const newPosition = {}
+        gameState.players[idx].shootCooldown = SHOOT_COOLDOWN;
+        newPosition.x = gameState.players[idx].direction.x*TILE_SIZE + gameState.players[idx].position.x
+        newPosition.y = gameState.players[idx].direction.y*TILE_SIZE + gameState.players[idx].position.y
+        return {
+            direction : gameState.players[idx].direction,
+            position : newPosition
+        }
+    })
+    return projectiles.filter((el) => el)
+}
+
+export const resolveProjectilePositions = (gameState) => {
+    const projectiles = gameState.projectiles.map((projectile) => {
+        return {
+            position:
+            {
+                x: projectile.position.x + projectile.direction.x*PROJECTILE_SPEED,
+                y: projectile.position.y + projectile.direction.y*PROJECTILE_SPEED
+            },
+            direction: projectile.direction
+        }
+        })
+        .map((pro) => {
+            console.log(pro);
+            return pro
+        })
+        .filter((projectile) => {
+            !checkCollisionWall(projectile.position, walls)
+    });
+    console.log(projectiles)
+    gameState.projectiles.length = 0;
+    gameState.projectiles = structuredClone(projectiles);
+}
+
+export const reduceCooldown = (gameState) => {
+    gameState.players.forEach((player) => {
+        player.shootCooldown = Math.max(0, player.shootCooldown - 1)
+    })
 }

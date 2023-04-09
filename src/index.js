@@ -1,9 +1,9 @@
 import { createPlayer } from "./pacman.js";
 import { ticker } from "./basicStreams.js";
 import { draw } from "./drawer.js";
-import { TILE_SIZE } from "./constants.js";
+import { TILE_SIZE, SHOOT_COOLDOWN, TICK_RATE } from "./constants.js";
 import { createGhost } from "./ghosts.js";
-import { collisionPlayerGhost, resolvePlayerPosition, solveCollisionDot } from "./utils.js";
+import { collisionPlayerGhost, resolvePlayerPosition, solveCollisionDot, resolveShootEvents, resolveProjectilePositions, reduceCooldown} from "./utils.js";
 
 
 let dotMap = [
@@ -44,16 +44,17 @@ const p1InitialState = {
         y: 1 * TILE_SIZE
     },
     direction: {
-        x: 0,
+        x: 1,
         y: 0
     },
     score: 0,
-    state: 'normal'
+    state: 'normal',
+    shootCooldown : 0
 }
 
 const p2Keys = {
     movement: ['KeyW', 'KeyA', 'KeyS', 'KeyD'],
-    shoot: 'KeyL'
+    shoot: 'KeyF'
 }
 
 const p2InitialState = {
@@ -62,16 +63,20 @@ const p2InitialState = {
         y: 1 * TILE_SIZE
     },
     direction: {
-        x: 0,
+        x: -1,
         y: 0
     },
     score: 0,
-    state: 'normal'
+    state: 'normal',
+    shootCooldown : 0
 }
 
-const p1Data = createPlayer(p1Keys, /*p1InitialState,*/ 1)
-const p2Data = createPlayer(p2Keys, /*p2InitialState,*/ 2)
+const p1Data = createPlayer(p1Keys, p1InitialState.direction, 1)
+const p2Data = createPlayer(p2Keys, p2InitialState.direction, 2)
 
+const playerShootStream =  ticker.pipe(
+    rxjs.withLatestFrom(p1Data.shootStream, p2Data.shootStream)
+)
 
 // DEFINE GHOSTS
 const ghost1InitialState = {
@@ -127,6 +132,7 @@ const ghostDataStream = ghost1Data.positionStream.pipe(
     rxjs.withLatestFrom(ghost2Data.positionStream, ghost3Data.positionStream, ghost4Data.positionStream)
 )
 
+
 const ghostSprites = [
     ghost1Data.sprite,
     ghost2Data.sprite,
@@ -144,7 +150,8 @@ const intialGameState = {
         ghost2InitialState,
         ghost3InitialState,
         ghost4InitialState
-    ]
+    ],
+    projectiles: []
 }
 
 // Buscar donde hace sentido que este esta imagen, quiza
@@ -157,10 +164,17 @@ dotImage.onload = () => {
     ticker.pipe(
         // Despues, agregar el shoot stream, pero no con withlatestfrom,
         // quiza con un merge o algo asi
-        rxjs.withLatestFrom(p1Data.directionStream, p2Data.directionStream, ghostDataStream),
-        rxjs.scan((previousGameState, [tick, p1Direction, p2Direction, ghostStates]) => {
-
+        rxjs.withLatestFrom(p1Data.directionStream, p2Data.directionStream, ghostDataStream, playerShootStream),
+        rxjs.scan((previousGameState, [tick, p1Direction, p2Direction, ghostStates, playerShootStream]) => {
+               
             const gameState = previousGameState
+            const newProjectiles = resolveShootEvents(playerShootStream, gameState);
+
+            gameState.projectiles.push(...newProjectiles);
+
+            resolveProjectilePositions(gameState)
+            
+            gameState.projectiles.length != 0 ? console.log(gameState.projectiles) : ""
 
             resolvePlayerPosition(gameState, p1Direction, 0)
             resolvePlayerPosition(gameState, p2Direction, 1)
@@ -171,8 +185,9 @@ dotImage.onload = () => {
             const newPositions = gameState.players.map((player, idx) => {
                 return collisionPlayerGhost(player, gameState.ghosts) ? intialGameState.players[idx].position : player.position          
             })
-            
+
             newPositions.forEach((pos, idx) => gameState.players[idx].position = pos);
+            reduceCooldown(gameState)
             return gameState
 
         }, structuredClone(intialGameState))
