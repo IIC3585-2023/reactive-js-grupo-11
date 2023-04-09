@@ -3,7 +3,7 @@
 // import { checkColision } from "./utils.js";
 
 
-const createPlayer = (playerKeys, initialPosition, playerNumber) => {
+const createPlayer = (playerKeys, initialState, playerNumber) => {
     // Direction Stream
     const playerDirectionStream = keyPresses.pipe(
         rxjs.filter(event => playerKeys.movement.includes(event.code)),
@@ -30,17 +30,36 @@ const createPlayer = (playerKeys, initialPosition, playerNumber) => {
         rxjs.startWith({x: 0, y: 0})
     )
 
+    // const validDirectionStream = playerDirectionStream.pipe(
+    //     rxjs.scan((previousDirection, newDirection) => {
+
+    //     })
+    // )
+
     // Player Position Stream
     const playerPositionStream = ticker.pipe(
         rxjs.withLatestFrom(playerDirectionStream),
-        rxjs.scan((previousPosition, [tick, direction]) => {
-            const desiredNextPosition = {
-                x: previousPosition.x + direction.x * SPEED,
-                y: previousPosition.y + direction.y * SPEED
+        rxjs.scan((previousState, [tick, direction]) => {
+            const desiredNextState = {
+                position: {
+                    x: previousState.position.x + direction.x * SPEED,
+                    y: previousState.position.y + direction.y * SPEED,
+                },
+                direction: direction
+            }
+            const previousDirectionNextState = {
+                position: {
+                    x: previousState.position.x + previousState.direction.x * SPEED,
+                    y: previousState.position.y + previousState.direction.y * SPEED 
+                },
+                direction: previousState.direction
             }
             // TODO: IF COLISION RETURN LAST ELSE RETURN NEW
-            return checkColision(desiredNextPosition, walls) ? previousPosition : desiredNextPosition
-        }, initialPosition)
+            return checkColision(desiredNextState.position, walls) ? (
+                        checkColision(previousDirectionNextState.position, walls) ? previousState : previousDirectionNextState) :
+                        desiredNextState
+        }, initialState),
+        rxjs.map(event => event.position)
     )
 
     // Shoot Stream
