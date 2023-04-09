@@ -1,6 +1,6 @@
 import { SPEED, walls } from "./constants.js";
 import { ticker } from "./basicStreams.js";
-import { checkCollision } from "./utils.js";
+import { checkCollisionWall } from "./utils.js";
 
 const validDirections = [
     {
@@ -25,7 +25,7 @@ const getPossibleNextDirections = (ghostState) => {
             x: ghostState.position.x + direction.x * SPEED,
             y: ghostState.position.y + direction.y * SPEED,
         }
-        return !checkCollision(desiredNextPosition, walls)
+        return !checkCollisionWall(desiredNextPosition, walls)
     })
 }
 

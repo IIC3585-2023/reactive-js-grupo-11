@@ -46,7 +46,7 @@ const drawGhosts = (ghostsInformation) => {
     })
 }
 
-const drawMap = (tiles, walls) => {
+const drawMap = (tiles, walls, dotMap) => {
     const dotImage = tiles.dotImage
     ctx.fillStyle = "#000075";
 
@@ -55,11 +55,11 @@ const drawMap = (tiles, walls) => {
             if(walls[row][col] == 1){
                 ctx.fillRect(col*TILE_SIZE, row*TILE_SIZE, TILE_SIZE, TILE_SIZE)
             }
-            if(walls[row][col] == 2){
+            if(dotMap[row][col] == 2){
                 ctx.drawImage(dotImage, col*TILE_SIZE + bigTileDifference/2, row*TILE_SIZE + bigTileDifference/2, 
                             TILE_SIZE - bigTileDifference, TILE_SIZE - bigTileDifference);
             }
-            if(walls[row][col] == 3){
+            if(dotMap[row][col] == 3){
                 ctx.drawImage(dotImage, col*TILE_SIZE - bigTileDifference/2, row*TILE_SIZE - bigTileDifference/2,
                              TILE_SIZE + bigTileDifference/2, TILE_SIZE + bigTileDifference/2);
             }
@@ -67,9 +67,9 @@ const drawMap = (tiles, walls) => {
     }
 }
 
-export const draw = (playersInformation, ghostsInformation, tiles) => {
+export const draw = (playersInformation, ghostsInformation, dotMap, tiles) => {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
-    drawMap(tiles, walls)
+    drawMap(tiles, walls, dotMap)
     drawPlayers(playersInformation)
     drawGhosts(ghostsInformation)
 }
