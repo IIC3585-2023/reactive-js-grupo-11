@@ -99,7 +99,7 @@ export const resolveShootEvents = ([ticker, ...shootStreams], gameState) => {
 }
 
 export const resolveProjectilePositions = (gameState) => {
-    const projectiles = gameState.projectiles.map((projectile) => {
+    return gameState.projectiles.map((projectile) => {
         return {
             position:
             {
@@ -109,16 +109,9 @@ export const resolveProjectilePositions = (gameState) => {
             direction: projectile.direction
         }
         })
-        .map((pro) => {
-            console.log(pro);
-            return pro
-        })
         .filter((projectile) => {
-            !checkCollisionWall(projectile.position, walls)
+            return !checkCollisionWall(projectile.position, walls)
     });
-    console.log(projectiles)
-    gameState.projectiles.length = 0;
-    gameState.projectiles = structuredClone(projectiles);
 }
 
 export const reduceCooldown = (gameState) => {

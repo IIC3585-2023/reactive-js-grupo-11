@@ -17,7 +17,7 @@ export const DIRS = {
 
 export const SPEED = 2;
 
-export const PROJECTILE_SPEED = SPEED*1.5;
+export const PROJECTILE_SPEED = SPEED*3;
 
 export const walls = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],

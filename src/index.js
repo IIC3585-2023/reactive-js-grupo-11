@@ -158,6 +158,8 @@ const intialGameState = {
 // agregamos un file que tenga todas las imagenes y les
 // haga load o algo asi
 const dotImage = new Image()
+const projectileImage = new Image()
+projectileImage.src = '../assets/rasengan.png'
 dotImage.src = '../assets/tiles/dot.png'
 
 dotImage.onload = () => {
@@ -172,7 +174,7 @@ dotImage.onload = () => {
 
             gameState.projectiles.push(...newProjectiles);
 
-            resolveProjectilePositions(gameState)
+            gameState.projectiles = resolveProjectilePositions(gameState)
             
             gameState.projectiles.length != 0 ? console.log(gameState.projectiles) : ""
 
@@ -213,7 +215,7 @@ dotImage.onload = () => {
                 }
             })
 
-            draw([p1Info, p2Info], ghostsInfo, dotMap, {dotImage: dotImage})
+            draw([p1Info, p2Info], ghostsInfo, dotMap, {dotImage: dotImage, projectile: projectileImage}, gameState.projectiles)
         },
         error: console.log
     })

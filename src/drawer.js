@@ -67,9 +67,24 @@ const drawMap = (tiles, walls, dotMap) => {
     }
 }
 
-export const draw = (playersInformation, ghostsInformation, dotMap, tiles) => {
+export const drawProjectiles = (projectiles, projectileSprite) => {
+    projectiles.forEach((projectile) => {
+
+        ctx.save()
+        const {position, direction} = projectile
+        ctx.translate(position.x + TILE_SIZE / 2, position.y + TILE_SIZE / 2)
+        ctx.rotate(getRotationAngle(direction))
+        ctx.translate(- (position.x + TILE_SIZE / 2), - (position.y + TILE_SIZE / 2))
+        ctx.drawImage(projectileSprite, position.x, position.y, TILE_SIZE, TILE_SIZE)
+        ctx.restore()
+        // ctx.drawImage(projectileSprite, projectile.position.x, projectile.position.y, TILE_SIZE, TILE_SIZE)
+    })
+}
+
+export const draw = (playersInformation, ghostsInformation, dotMap, tiles, projectiles) => {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
     drawMap(tiles, walls, dotMap)
     drawPlayers(playersInformation)
     drawGhosts(ghostsInformation)
+    drawProjectiles(projectiles, tiles.projectile)
 }
