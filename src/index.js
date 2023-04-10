@@ -3,7 +3,16 @@ import { ticker } from "./basicStreams.js";
 import { draw } from "./drawer.js";
 import { TILE_SIZE, SHOOT_COOLDOWN, TICK_RATE } from "./constants.js";
 import { createGhost } from "./ghosts.js";
-import { collisionPlayerGhost, resolvePlayerPosition, solveCollisionDot, resolveShootEvents, resolveProjectilePositions, reduceCooldown, resolveProjectileHit} from "./utils.js";
+import { 
+    collisionPlayerGhost,
+    resolvePlayerPosition, 
+    solveCollisionDot, 
+    resolveShootEvents, 
+    resolveProjectilePositions, 
+    reduceCooldown, 
+    resolveProjectileHit,
+    killPlayer
+} from "./utils.js";
 
 
 let dotMap = [
@@ -49,7 +58,8 @@ const p1InitialState = {
     },
     score: 0,
     state: 'normal',
-    shootCooldown : 0
+    shootCooldown : 0,
+    deadCooldown: 0
 }
 
 const p2Keys = {
@@ -68,7 +78,8 @@ const p2InitialState = {
     },
     score: 0,
     state: 'normal',
-    shootCooldown : 0
+    shootCooldown : 0,
+    deadCooldown: 0
 }
 
 const p1Data = createPlayer(p1Keys, p1InitialState.direction, 1)
@@ -140,7 +151,7 @@ const ghostSprites = [
     ghost4Data.sprite
 ]
 
-const intialGameState = {
+const initialGameState = {
     players: [
         structuredClone(p1InitialState),
         structuredClone(p2InitialState),
@@ -164,49 +175,50 @@ dotImage.src = '../assets/tiles/dot.png'
 
 dotImage.onload = () => {
     ticker.pipe(
-        // Despues, agregar el shoot stream, pero no con withlatestfrom,
-        // quiza con un merge o algo asi
         rxjs.withLatestFrom(p1Data.directionStream, p2Data.directionStream, ghostDataStream, playerShootStream),
         rxjs.scan((previousGameState, [tick, p1Direction, p2Direction, ghostStates, playerShootStream]) => {
                
             const gameState = previousGameState
             const newProjectiles = resolveShootEvents(playerShootStream, gameState);
             gameState.projectiles.push(...newProjectiles);
-            console.log(gameState.projectiles)
+
             gameState.projectiles = resolveProjectilePositions(gameState)
-            console.log(gameState.projectiles)
+ 
             resolvePlayerPosition(gameState, p1Direction, 0)
             resolvePlayerPosition(gameState, p2Direction, 1)
-            console.log(gameState)
 
-            console.log(gameState.projectiles)
-
-            gameState.projectiles = resolveProjectileHit(gameState, intialGameState);
+            gameState.projectiles = resolveProjectileHit(gameState, initialGameState);
             gameState.ghosts = ghostStates
 
             solveCollisionDot(gameState, dotMap);
 
-            const newPositions = gameState.players.map((player, idx) => {
-                return collisionPlayerGhost(player, gameState.ghosts) ? intialGameState.players[idx].position : player.position          
+            const playerGhostCollision = gameState.players.map((player) => {
+                return collisionPlayerGhost(player, gameState.ghosts)         
             })
 
-            newPositions.forEach((pos, idx) => gameState.players[idx].position = pos);
+            playerGhostCollision.forEach( (collision, idx) => {
+                if (collision) killPlayer(gameState, idx, initialGameState.players[idx])
+            })
+
+            // newPositions.forEach((pos, idx) => gameState.players[idx].position = pos);
             reduceCooldown(gameState)
             return gameState
 
-        }, structuredClone(intialGameState))
+        }, structuredClone(initialGameState))
     ).subscribe({
         next: (gameState) => {
             const p1Info = {
                 position: gameState.players[0].position,
                 direction: gameState.players[0].direction,
-                sprite: p1Data.sprite
+                sprite: p1Data.sprite,
+                state: gameState.players[0].state
             }
 
             const p2Info = {
                 position: gameState.players[1].position,
                 direction: gameState.players[1].direction,
-                sprite: p2Data.sprite
+                sprite: p2Data.sprite,
+                state: gameState.players[1].state
             }
 
             const ghostsInfo = gameState.ghosts.map( (state, idx) => {

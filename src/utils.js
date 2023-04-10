@@ -1,4 +1,4 @@
-import { TILE_SIZE, SPEED, walls, PROJECTILE_SPEED, SHOOT_COOLDOWN } from "./constants"
+import { TILE_SIZE, SPEED, walls, PROJECTILE_SPEED, SHOOT_COOLDOWN, DEAD_COOLDOWN, DEATH_PENALTY} from "./constants"
 
 
 const checkCollision = (tileType, returnPos) => (playerPos, map) => {
@@ -35,6 +35,11 @@ export {checkCollisionWall, checkCollisionDot};
 
 export const resolvePlayerPosition = (gameState, direction, playerNumber) => {
     const previousState = gameState.players[playerNumber]
+    if (gameState.players[playerNumber].state === 'dead') {
+        gameState.players[playerNumber].position = previousState.position
+        gameState.players[playerNumber].direction = previousState.direction
+        return
+    }
     const desiredNextState = {
         position: {
             x: previousState.position.x + direction.x * SPEED,
@@ -69,6 +74,7 @@ export const solveCollisionDot = (gameState, dotMap) => {
 }
 
 export const collisionPlayerGhost = (player, ghosts) => {
+    if (player.state === 'dead') return false
     const playerX = player.position.x;
     const playerY = player.position.y;
     const ghostCollisions = ghosts.map((ghost) => {
@@ -114,9 +120,21 @@ export const resolveProjectilePositions = (gameState) => {
     });
 }
 
+export const killPlayer = (gameState, playerId, initialPlayerState) => {
+    gameState.players[playerId].position.x = initialPlayerState.position.x
+    gameState.players[playerId].position.y = initialPlayerState.position.y
+    gameState.players[playerId].direction.x = initialPlayerState.direction.x
+    gameState.players[playerId].direction.y = initialPlayerState.direction.y
+    gameState.players[playerId].state = 'dead'
+    gameState.players[playerId].deadCooldown = DEAD_COOLDOWN
+    gameState.players[playerId].score -= DEATH_PENALTY
+    console.log(`New score is ${gameState.players[playerId].score}`)
+}
+
 export const resolveProjectileHit = (gameState, initialGameState) => {
     const projectilesHit = []
     for(let i = 0; i < gameState.players.length; i++){
+        if (gameState.players[i].state === 'dead') continue
         for(let j = 0; j < gameState.projectiles.length; j++){
             if(
                 gameState.players[i].position.x < gameState.projectiles[j].position.x + TILE_SIZE &&
@@ -124,10 +142,8 @@ export const resolveProjectileHit = (gameState, initialGameState) => {
                 gameState.players[i].position.y < gameState.projectiles[j].position.y + TILE_SIZE &&
                 gameState.players[i].position.y + TILE_SIZE > gameState.projectiles[j].position.y
             ){
-                gameState.players[i].position.x = initialGameState.players[i].position.x
-                gameState.players[i].position.y = initialGameState.players[i].position.y
-                gameState.players[i].direction.x = initialGameState.players[i].direction.x
-                gameState.players[i].direction.y = initialGameState.players[i].direction.y
+                // Ver si lo cambiamos por stun player
+                killPlayer(gameState, i, initialGameState.players[i])
                 if(!projectilesHit.includes(j)) projectilesHit.push(j)
             }
         }
@@ -142,5 +158,9 @@ export const resolveProjectileHit = (gameState, initialGameState) => {
 export const reduceCooldown = (gameState) => {
     gameState.players.forEach((player) => {
         player.shootCooldown = Math.max(0, player.shootCooldown - 1)
+        player.deadCooldown = Math.max(0, player.deadCooldown - 1)
+        if (player.deadCooldown === 0) {
+            player.state = 'normal'
+        }
     })
 }

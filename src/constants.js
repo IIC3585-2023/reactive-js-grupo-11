@@ -7,6 +7,9 @@ export const TICK_RATE = 20;
 
 export const SHOOT_COOLDOWN = 1000/TICK_RATE*5;
 
+export const DEAD_COOLDOWN = 1000/TICK_RATE * 5
+
+export const DEATH_PENALTY = 1000
 
 export const DIRS = {
     "w": [0, -1],

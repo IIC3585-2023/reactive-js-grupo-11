@@ -29,6 +29,7 @@ PlayersInformation =
 */
 const drawPlayers = (playersInformation) => {
     playersInformation.forEach( (playerInfo) => {
+        if (playerInfo.state === 'dead') return;
         ctx.save()
         const {position, direction, sprite} = playerInfo
         ctx.translate(position.x + TILE_SIZE / 2, position.y + TILE_SIZE / 2)
@@ -41,7 +42,7 @@ const drawPlayers = (playersInformation) => {
 
 const drawGhosts = (ghostsInformation) => {
     ghostsInformation.forEach( (ghostInfo) => {
-        const {position, direction, sprite} = ghostInfo
+        const {position, sprite} = ghostInfo
         ctx.drawImage(sprite, position.x, position.y, TILE_SIZE, TILE_SIZE)
     })
 }
