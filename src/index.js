@@ -3,7 +3,7 @@ import { ticker } from "./basicStreams.js";
 import { draw } from "./drawer.js";
 import { TILE_SIZE, SHOOT_COOLDOWN, TICK_RATE } from "./constants.js";
 import { createGhost } from "./ghosts.js";
-import { collisionPlayerGhost, resolvePlayerPosition, solveCollisionDot, resolveShootEvents, resolveProjectilePositions, reduceCooldown} from "./utils.js";
+import { collisionPlayerGhost, resolvePlayerPosition, solveCollisionDot, resolveShootEvents, resolveProjectilePositions, reduceCooldown, resolveProjectileHit} from "./utils.js";
 
 
 let dotMap = [
@@ -171,15 +171,17 @@ dotImage.onload = () => {
                
             const gameState = previousGameState
             const newProjectiles = resolveShootEvents(playerShootStream, gameState);
-
             gameState.projectiles.push(...newProjectiles);
-
+            console.log(gameState.projectiles)
             gameState.projectiles = resolveProjectilePositions(gameState)
-            
-            gameState.projectiles.length != 0 ? console.log(gameState.projectiles) : ""
-
+            console.log(gameState.projectiles)
             resolvePlayerPosition(gameState, p1Direction, 0)
             resolvePlayerPosition(gameState, p2Direction, 1)
+            console.log(gameState)
+
+            console.log(gameState.projectiles)
+
+            gameState.projectiles = resolveProjectileHit(gameState, intialGameState);
             gameState.ghosts = ghostStates
 
             solveCollisionDot(gameState, dotMap);

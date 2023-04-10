@@ -114,6 +114,31 @@ export const resolveProjectilePositions = (gameState) => {
     });
 }
 
+export const resolveProjectileHit = (gameState, initialGameState) => {
+    const projectilesHit = []
+    for(let i = 0; i < gameState.players.length; i++){
+        for(let j = 0; j < gameState.projectiles.length; j++){
+            if(
+                gameState.players[i].position.x < gameState.projectiles[j].position.x + TILE_SIZE &&
+                gameState.players[i].position.x + TILE_SIZE > gameState.projectiles[j].position.x &&
+                gameState.players[i].position.y < gameState.projectiles[j].position.y + TILE_SIZE &&
+                gameState.players[i].position.y + TILE_SIZE > gameState.projectiles[j].position.y
+            ){
+                gameState.players[i].position.x = initialGameState.players[i].position.x
+                gameState.players[i].position.y = initialGameState.players[i].position.y
+                gameState.players[i].direction.x = initialGameState.players[i].direction.x
+                gameState.players[i].direction.y = initialGameState.players[i].direction.y
+                if(!projectilesHit.includes(j)) projectilesHit.push(j)
+            }
+        }
+    }
+    const remainingProjectiles = []
+    for(let i = 0; i < gameState.projectiles.length; i++){
+        if(!projectilesHit.includes(i)) remainingProjectiles.push(gameState.projectiles[i])
+    }
+    return remainingProjectiles
+}
+
 export const reduceCooldown = (gameState) => {
     gameState.players.forEach((player) => {
         player.shootCooldown = Math.max(0, player.shootCooldown - 1)
