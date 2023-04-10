@@ -3,6 +3,12 @@ canvas {
     padding-right: 0;
     margin-left: 30%;
     margin-right: auto;
-    margin-top: 100px;
+    margin-top: 50px;
     display: block;
+}
+@font-face {
+    font-family: 'Ozone';
+    src: url('Ozone-xRRO.ttf');
+    font-weight: normal;
+    font-style: normal;
 }

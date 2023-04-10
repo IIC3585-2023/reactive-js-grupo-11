@@ -1,6 +1,6 @@
 import { createPlayer } from "./pacman.js";
 import { ticker } from "./basicStreams.js";
-import { draw } from "./drawer.js";
+import { draw, drawGameOver } from "./drawer.js";
 import { TILE_SIZE } from "./constants.js";
 import { createGhost } from "./ghosts.js";
 import { 
@@ -208,7 +208,8 @@ dotImage.onload = () => {
 
         }, structuredClone(initialGameState)),
         rxjs.takeWhile(gameState => {
-            return !checkGameEnd(gameState)
+            // return !checkGameEnd(gameState)
+            return !(gameState.players[0].score > 1000)
         }, true)
     ).subscribe({
         next: (gameState) => {
@@ -216,14 +217,16 @@ dotImage.onload = () => {
                 position: gameState.players[0].position,
                 direction: gameState.players[0].direction,
                 sprite: p1Data.sprite,
-                state: gameState.players[0].state
+                state: gameState.players[0].state,
+                score: gameState.players[0].score
             }
 
             const p2Info = {
                 position: gameState.players[1].position,
                 direction: gameState.players[1].direction,
                 sprite: p2Data.sprite,
-                state: gameState.players[1].state
+                state: gameState.players[1].state,
+                score: gameState.players[1].score
             }
 
             const ghostsInfo = gameState.ghosts.map( (state, idx) => {
@@ -238,6 +241,7 @@ dotImage.onload = () => {
         },
         error: console.log,
         complete: () => {
+            drawGameOver();
             console.log('GAME OVER')
         }
     })

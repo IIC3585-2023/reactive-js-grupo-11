@@ -82,10 +82,25 @@ export const drawProjectiles = (projectiles, projectileSprite) => {
     })
 }
 
+export const drawScoreboard = (p1Score, p2Score) => {
+    ctx.font = (TILE_SIZE*1.2).toString() + "px Ozone";
+    ctx.fillStyle = "#FFCC00";
+    ctx.fillText("Score P1: " + p1Score, 0, TILE_SIZE*24)
+    ctx.fillStyle = "#000000";
+    ctx.fillText("Score P2: " + p2Score, 12.5*TILE_SIZE, TILE_SIZE*24)
+}
+
+export const drawGameOver = () => {
+    ctx.font = (TILE_SIZE*2).toString() + "px Ozone";
+    ctx.fillStyle = "#FF0000";
+    ctx.fillText("GAME OVER", 5.2*TILE_SIZE, 26*TILE_SIZE)
+}
+
 export const draw = (playersInformation, ghostsInformation, dotMap, tiles, projectiles) => {
     ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight)
     drawMap(tiles, walls, dotMap)
     drawPlayers(playersInformation)
     drawGhosts(ghostsInformation)
     drawProjectiles(projectiles, tiles.projectile)
+    drawScoreboard(playersInformation[0].score, playersInformation[1].score)
 }
