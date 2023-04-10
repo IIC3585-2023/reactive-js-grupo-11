@@ -54,7 +54,7 @@ export const resolvePlayerPosition = (gameState, direction, playerNumber) => {
         },
         direction: previousState.direction
     }
-    // TODO: IF COLISION RETURN LAST ELSE RETURN NEW
+
     const nextPosition = checkCollisionWall(desiredNextState.position, walls) ? (
                             checkCollisionWall(previousDirectionNextState.position, walls) ? previousState : previousDirectionNextState) :
                             desiredNextState
@@ -62,7 +62,8 @@ export const resolvePlayerPosition = (gameState, direction, playerNumber) => {
     gameState.players[playerNumber].direction = nextPosition.direction
 }
 
-export const solveCollisionDot = (gameState, dotMap) => {
+export const solveCollisionDot = (gameState) => {
+    const dotMap = gameState.dots
     const playersStates = gameState.players;
     playersStates.forEach(playerState => {
         const collision = checkCollisionDot(playerState.position, dotMap);
@@ -72,6 +73,13 @@ export const solveCollisionDot = (gameState, dotMap) => {
         }
     });
 }
+
+// export const checkGameEnd = (gameState) => {
+//     const dots = gameState.dots
+//     console.log(dots)
+//     const rowsWithDots = dots.map( (row) => row.reduce((previous, next) => {previous || next !== 0}, false))
+//     return rowsWithDots.some((element) => element)
+// }
 
 export const collisionPlayerGhost = (player, ghosts) => {
     if (player.state === 'dead') return false

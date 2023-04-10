@@ -11,11 +11,12 @@ import {
     resolveProjectilePositions, 
     reduceCooldown, 
     resolveProjectileHit,
-    killPlayer
+    killPlayer,
+    checkGameEnd
 } from "./utils.js";
 
 
-let dotMap = [
+const dotMap = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0],
     [0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0],
@@ -162,7 +163,8 @@ const initialGameState = {
         ghost3InitialState,
         ghost4InitialState
     ],
-    projectiles: []
+    projectiles: [],
+    dots: structuredClone(dotMap)
 }
 
 // Buscar donde hace sentido que este esta imagen, quiza
@@ -190,7 +192,7 @@ dotImage.onload = () => {
             gameState.projectiles = resolveProjectileHit(gameState, initialGameState);
             gameState.ghosts = ghostStates
 
-            solveCollisionDot(gameState, dotMap);
+            solveCollisionDot(gameState);
 
             const playerGhostCollision = gameState.players.map((player) => {
                 return collisionPlayerGhost(player, gameState.ghosts)         
@@ -229,7 +231,8 @@ dotImage.onload = () => {
                 }
             })
 
-            draw([p1Info, p2Info], ghostsInfo, dotMap, {dotImage: dotImage, projectile: projectileImage}, gameState.projectiles)
+            draw([p1Info, p2Info], ghostsInfo, gameState.dots, {dotImage: dotImage, projectile: projectileImage}, gameState.projectiles)
+            if (checkGameEnd(gameState)) console.log('GAME OVER')
         },
         error: console.log
     })
