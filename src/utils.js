@@ -74,12 +74,15 @@ export const solveCollisionDot = (gameState) => {
     });
 }
 
-// export const checkGameEnd = (gameState) => {
-//     const dots = gameState.dots
-//     console.log(dots)
-//     const rowsWithDots = dots.map( (row) => row.reduce((previous, next) => {previous || next !== 0}, false))
-//     return rowsWithDots.some((element) => element)
-// }
+export const checkGameEnd = (gameState) => {
+    const dots = gameState.dots
+    const rowsWithDots = dots.map( (row) => {
+        return row.reduce((previous, next) => {
+            return previous || next !== 0
+        }, false)
+    })
+    return !rowsWithDots.some((element) => element)
+}
 
 export const collisionPlayerGhost = (player, ghosts) => {
     if (player.state === 'dead') return false

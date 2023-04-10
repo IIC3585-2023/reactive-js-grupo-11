@@ -1,7 +1,7 @@
 import { createPlayer } from "./pacman.js";
 import { ticker } from "./basicStreams.js";
 import { draw } from "./drawer.js";
-import { TILE_SIZE, SHOOT_COOLDOWN, TICK_RATE } from "./constants.js";
+import { TILE_SIZE } from "./constants.js";
 import { createGhost } from "./ghosts.js";
 import { 
     collisionPlayerGhost,
@@ -206,7 +206,10 @@ dotImage.onload = () => {
             reduceCooldown(gameState)
             return gameState
 
-        }, structuredClone(initialGameState))
+        }, structuredClone(initialGameState)),
+        rxjs.takeWhile(gameState => {
+            return !checkGameEnd(gameState)
+        }, true)
     ).subscribe({
         next: (gameState) => {
             const p1Info = {
@@ -232,8 +235,10 @@ dotImage.onload = () => {
             })
 
             draw([p1Info, p2Info], ghostsInfo, gameState.dots, {dotImage: dotImage, projectile: projectileImage}, gameState.projectiles)
-            if (checkGameEnd(gameState)) console.log('GAME OVER')
         },
-        error: console.log
+        error: console.log,
+        complete: () => {
+            console.log('GAME OVER')
+        }
     })
 }
