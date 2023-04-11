@@ -234,7 +234,7 @@ function playGame() {
                     direction: gameState.players[1].direction,
                     sprite: p2Data.sprite,
                     state: gameState.players[1].state,
-                    score: gameState.players[0].score,
+                    score: gameState.players[1].score,
                 }
 
 
@@ -252,6 +252,7 @@ function playGame() {
             complete: () => {
                 drawGameOver();
                 console.log('GAME OVER')
+                document.getElementById("playButton").remove();
             }
         })
     }
