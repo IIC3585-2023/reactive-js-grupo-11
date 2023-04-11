@@ -1,4 +1,5 @@
-export const TILE_SIZE = 25;
+// TILE SIZE MUST BE A MULYIBLE OF SPEED
+export const TILE_SIZE = 24;
 
 export const bigTileDifference = 10
 

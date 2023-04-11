@@ -225,14 +225,16 @@ function playGame() {
                     position: gameState.players[0].position,
                     direction: gameState.players[0].direction,
                     sprite: p1Data.sprite,
-                    state: gameState.players[0].state
+                    state: gameState.players[0].state,
+                    score: gameState.players[0].score
                 }
 
                 const p2Info = {
                     position: gameState.players[1].position,
                     direction: gameState.players[1].direction,
                     sprite: p2Data.sprite,
-                    state: gameState.players[1].state
+                    state: gameState.players[1].state,
+                    score: gameState.players[0].score,
                 }
 
 
@@ -248,6 +250,7 @@ function playGame() {
             },
             error: console.log,
             complete: () => {
+                drawGameOver();
                 console.log('GAME OVER')
             }
         })

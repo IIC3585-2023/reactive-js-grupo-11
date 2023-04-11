@@ -86,7 +86,7 @@ export const drawScoreboard = (p1Score, p2Score) => {
     ctx.font = (TILE_SIZE*1.2).toString() + "px Ozone";
     ctx.fillStyle = "#FFCC00";
     ctx.fillText("Score P1: " + p1Score, 0, TILE_SIZE*24)
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = "#00FF00";
     ctx.fillText("Score P2: " + p2Score, 12.5*TILE_SIZE, TILE_SIZE*24)
 }
 
