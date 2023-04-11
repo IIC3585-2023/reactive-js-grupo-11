@@ -6,6 +6,18 @@ body {
 }
 
 canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 30%;
+    margin-right: auto;
+    margin-top: 50px;
+    display: block;
+}
+@font-face {
+    font-family: 'Ozone';
+    src: url('Ozone-xRRO.ttf');
+    font-weight: normal;
+    font-style: normal;
     padding: 0;
     padding-left: 340px;
     margin: auto;

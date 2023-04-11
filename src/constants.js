@@ -1,4 +1,4 @@
-export const TILE_SIZE = 30;
+export const TILE_SIZE = 25;
 
 export const bigTileDifference = 10
 

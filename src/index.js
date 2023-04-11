@@ -1,6 +1,6 @@
 import { createPlayer } from "./pacman.js";
 import { ticker } from "./basicStreams.js";
-import { draw } from "./drawer.js";
+import { draw, drawGameOver } from "./drawer.js";
 import { TILE_SIZE } from "./constants.js";
 import { createGhost } from "./ghosts.js";
 import { 
@@ -168,7 +168,6 @@ const initialGameState = {
     dots: structuredClone(dotMap)
 }
 
-
 window.onClickPlay =  function onClickPlay() {
     document.getElementById("playButton").remove();
     playGame();
@@ -235,6 +234,7 @@ function playGame() {
                     sprite: p2Data.sprite,
                     state: gameState.players[1].state
                 }
+
 
                 const ghostsInfo = gameState.ghosts.map( (state, idx) => {
                     return {
