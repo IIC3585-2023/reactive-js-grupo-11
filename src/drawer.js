@@ -2,6 +2,8 @@ import { TILE_SIZE, bigTileDifference, walls } from "./constants"
 
 const canvas = document.getElementById('pacman')
 const ctx = canvas.getContext("2d")
+ctx.canvas.width = 22 * TILE_SIZE;
+ctx.canvas.height = 28 * TILE_SIZE + 10;
 
 const getRotationAngle = (direction) => {
     const {x, y} = direction
