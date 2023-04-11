@@ -87,6 +87,8 @@ const p2InitialState = {
 const p1Data = createPlayer(p1Keys, p1InitialState.direction, 1)
 const p2Data = createPlayer(p2Keys, p2InitialState.direction, 2)
 
+const playerSprites = [p1Data.sprite, p2Data.sprite]
+
 const playerShootStream =  ticker.pipe(
     rxjs.withLatestFrom(p1Data.shootStream, p2Data.shootStream)
 )
@@ -169,7 +171,7 @@ const initialGameState = {
 }
 
 window.onClickPlay =  function onClickPlay() {
-    document.getElementById("playButton").remove();
+    document.getElementById("playButton").classList.add("hidden");
     playGame();
 }
 
@@ -221,22 +223,15 @@ function playGame() {
             }, true)
         ).subscribe({
             next: (gameState) => {
-                const p1Info = {
-                    position: gameState.players[0].position,
-                    direction: gameState.players[0].direction,
-                    sprite: p1Data.sprite,
-                    state: gameState.players[0].state,
-                    score: gameState.players[0].score
-                }
-
-                const p2Info = {
-                    position: gameState.players[1].position,
-                    direction: gameState.players[1].direction,
-                    sprite: p2Data.sprite,
-                    state: gameState.players[1].state,
-                    score: gameState.players[1].score,
-                }
-
+                const playerInfo = gameState.players.map( (playerState, idx) => {
+                    return {
+                        position: playerState.position,
+                        direction: playerState.direction,
+                        sprite: playerSprites[idx],
+                        state: playerState.state,
+                        score: playerState.score
+                    }
+                })
 
                 const ghostsInfo = gameState.ghosts.map( (state, idx) => {
                     return {
@@ -246,13 +241,13 @@ function playGame() {
                     }
                 })
 
-                draw([p1Info, p2Info], ghostsInfo, gameState.dots, {dotImage: dotImage, projectile: projectileImage}, gameState.projectiles)
+                draw(playerInfo, ghostsInfo, gameState.dots, {dotImage: dotImage, projectile: projectileImage}, gameState.projectiles)
             },
             error: console.log,
             complete: () => {
                 drawGameOver();
                 console.log('GAME OVER')
-                document.getElementById("playButton").remove();
+                document.getElementById("playButton").classList.remove("hidden");
             }
         })
     }
