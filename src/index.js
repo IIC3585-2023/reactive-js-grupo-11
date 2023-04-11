@@ -171,7 +171,11 @@ const initialGameState = {
 }
 
 window.onClickPlay =  function onClickPlay() {
-    document.getElementById("playButton").classList.add("hidden");
+    document.getElementById("playButtonDiv").classList.add("hidden");
+    const canvasElement = document.getElementById("pacmanCanvas")
+    if (canvasElement.classList.contains('hidden')) {
+        canvasElement.classList.remove('hidden')
+    }
     playGame();
 }
 
@@ -247,7 +251,12 @@ function playGame() {
             complete: () => {
                 drawGameOver();
                 console.log('GAME OVER')
-                document.getElementById("playButton").classList.remove("hidden");
+                document.getElementById("playButtonDiv").classList.remove("hidden");
+                const buttonElement = document.getElementById("playButton")
+                buttonElement.innerText = 'Play again'
+                if (!buttonElement.classList.contains('playAgainButton')) {
+                    buttonElement.classList.add('playAgainButton')
+                }
             }
         })
     }

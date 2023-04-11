@@ -42,7 +42,7 @@ button {
     font-family: 'ArcadeClassic', sans-serif;
     text-align: center;
     font-size: 150;
-    left: 50%;
+    left: 45%;
     color: yellow;
 
     padding-left: 30px;
@@ -62,4 +62,8 @@ button {
 
 .hidden {
     display: none;
+}
+
+.playAgainButton {
+    font-size: 40;
 }

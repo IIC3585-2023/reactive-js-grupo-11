@@ -7,12 +7,12 @@
 <body>
 
     <h1>Pacman</h1>
-    <div class="center" id="playButton">
-        <button onclick="onClickPlay()">Play</button> 
+    <div class="center hidden" id="pacmanCanvas">
+        <canvas id="pacman" width="540" height="650"></canvas>
     </div>
-         
-    <div class="center" id="pacmanCanvas">
-        <canvas id="pacman" width="540" height="700"></canvas>
+
+    <div class="center" id="playButtonDiv">
+        <button id="playButton" onclick="onClickPlay()">Play</button> 
     </div>
 
     <script type="text/javascript" src="main.js"></script>
