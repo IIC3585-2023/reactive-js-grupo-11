@@ -14,6 +14,7 @@ import {
     killPlayer,
     checkGameEnd
 } from "./utils.js";
+// import { onClickPlay } from "./playButton.js";
 
 
 const dotMap = [
@@ -167,78 +168,88 @@ const initialGameState = {
     dots: structuredClone(dotMap)
 }
 
-// Buscar donde hace sentido que este esta imagen, quiza
-// agregamos un file que tenga todas las imagenes y les
-// haga load o algo asi
-const dotImage = new Image()
-const projectileImage = new Image()
-projectileImage.src = '../assets/rasengan.png'
-dotImage.src = '../assets/tiles/dot.png'
 
-dotImage.onload = () => {
-    ticker.pipe(
-        rxjs.withLatestFrom(p1Data.directionStream, p2Data.directionStream, ghostDataStream, playerShootStream),
-        rxjs.scan((previousGameState, [tick, p1Direction, p2Direction, ghostStates, playerShootStream]) => {
-               
-            const gameState = previousGameState
-            const newProjectiles = resolveShootEvents(playerShootStream, gameState);
-            gameState.projectiles.push(...newProjectiles);
+window.onClickPlay =  function onClickPlay() {
+    document.getElementById("playButton").remove();
+    playGame();
+}
 
-            gameState.projectiles = resolveProjectilePositions(gameState)
- 
-            resolvePlayerPosition(gameState, p1Direction, 0)
-            resolvePlayerPosition(gameState, p2Direction, 1)
+function playGame() {
+    console.log("lets play")
+    
+    // Buscar donde hace sentido que este esta imagen, quiza
+    // agregamos un file que tenga todas las imagenes y les
+    // haga load o algo asi
+    const dotImage = new Image()
+    const projectileImage = new Image()
+    projectileImage.src = '../assets/rasengan.png'
+    dotImage.src = '../assets/tiles/dot.png'
 
-            gameState.projectiles = resolveProjectileHit(gameState, initialGameState);
-            gameState.ghosts = ghostStates
+    dotImage.onload = () => {
+        ticker.pipe(
+            rxjs.withLatestFrom(p1Data.directionStream, p2Data.directionStream, ghostDataStream, playerShootStream),
+            rxjs.scan((previousGameState, [tick, p1Direction, p2Direction, ghostStates, playerShootStream]) => {
+                
+                const gameState = previousGameState
+                const newProjectiles = resolveShootEvents(playerShootStream, gameState);
+                gameState.projectiles.push(...newProjectiles);
 
-            solveCollisionDot(gameState);
+                gameState.projectiles = resolveProjectilePositions(gameState)
+    
+                resolvePlayerPosition(gameState, p1Direction, 0)
+                resolvePlayerPosition(gameState, p2Direction, 1)
 
-            const playerGhostCollision = gameState.players.map((player) => {
-                return collisionPlayerGhost(player, gameState.ghosts)         
-            })
+                gameState.projectiles = resolveProjectileHit(gameState, initialGameState);
+                gameState.ghosts = ghostStates
 
-            playerGhostCollision.forEach( (collision, idx) => {
-                if (collision) killPlayer(gameState, idx, initialGameState.players[idx])
-            })
+                solveCollisionDot(gameState);
 
-            // newPositions.forEach((pos, idx) => gameState.players[idx].position = pos);
-            reduceCooldown(gameState)
-            return gameState
+                const playerGhostCollision = gameState.players.map((player) => {
+                    return collisionPlayerGhost(player, gameState.ghosts)         
+                })
 
-        }, structuredClone(initialGameState)),
-        rxjs.takeWhile(gameState => {
-            return !checkGameEnd(gameState)
-        }, true)
-    ).subscribe({
-        next: (gameState) => {
-            const p1Info = {
-                position: gameState.players[0].position,
-                direction: gameState.players[0].direction,
-                sprite: p1Data.sprite,
-                state: gameState.players[0].state
-            }
+                playerGhostCollision.forEach( (collision, idx) => {
+                    if (collision) killPlayer(gameState, idx, initialGameState.players[idx])
+                })
 
-            const p2Info = {
-                position: gameState.players[1].position,
-                direction: gameState.players[1].direction,
-                sprite: p2Data.sprite,
-                state: gameState.players[1].state
-            }
+                // newPositions.forEach((pos, idx) => gameState.players[idx].position = pos);
+                reduceCooldown(gameState)
+                return gameState
 
-            const ghostsInfo = gameState.ghosts.map( (state, idx) => {
-                return {
-                    position: state.position,
-                    direction: state.direction,
-                    sprite: ghostSprites[idx]
+            }, structuredClone(initialGameState)),
+            rxjs.takeWhile(gameState => {
+                return !checkGameEnd(gameState)
+            }, true)
+        ).subscribe({
+            next: (gameState) => {
+                const p1Info = {
+                    position: gameState.players[0].position,
+                    direction: gameState.players[0].direction,
+                    sprite: p1Data.sprite,
+                    state: gameState.players[0].state
                 }
-            })
 
-            draw([p1Info, p2Info], ghostsInfo, gameState.dots, {dotImage: dotImage, projectile: projectileImage}, gameState.projectiles)
-        },
-        error: console.log,
-        complete: () => {
-            console.log('GAME OVER')
-        }
-    })
+                const p2Info = {
+                    position: gameState.players[1].position,
+                    direction: gameState.players[1].direction,
+                    sprite: p2Data.sprite,
+                    state: gameState.players[1].state
+                }
+
+                const ghostsInfo = gameState.ghosts.map( (state, idx) => {
+                    return {
+                        position: state.position,
+                        direction: state.direction,
+                        sprite: ghostSprites[idx]
+                    }
+                })
+
+                draw([p1Info, p2Info], ghostsInfo, gameState.dots, {dotImage: dotImage, projectile: projectileImage}, gameState.projectiles)
+            },
+            error: console.log,
+            complete: () => {
+                console.log('GAME OVER')
+            }
+        })
+    }
 }
