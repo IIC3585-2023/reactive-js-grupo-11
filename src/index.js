@@ -45,8 +45,8 @@ const dotMap = [
 
 // DEFINE PLAYERS
 const p1Keys = {
-    movement: ['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'],
-    shoot: 'KeyL'
+    movement: ['KeyW', 'KeyA', 'KeyS', 'KeyD'],
+    shoot: 'KeyF'
 }
 
 const p1InitialState = {
@@ -65,8 +65,8 @@ const p1InitialState = {
 }
 
 const p2Keys = {
-    movement: ['KeyW', 'KeyA', 'KeyS', 'KeyD'],
-    shoot: 'KeyF'
+    movement: ['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'],
+    shoot: 'KeyL'
 }
 
 const p2InitialState = {
