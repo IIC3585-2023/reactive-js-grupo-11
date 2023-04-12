@@ -96,8 +96,8 @@ const playerShootStream =  ticker.pipe(
 // DEFINE GHOSTS
 const ghost1InitialState = {
     position: {
-        x: 1 * TILE_SIZE,
-        y: 21 * TILE_SIZE
+        x: 7 * TILE_SIZE,
+        y: 8 * TILE_SIZE
     },
     direction: {
         x: 1,
@@ -107,8 +107,8 @@ const ghost1InitialState = {
 
 const ghost2InitialState = {
     position: {
-        x: 19 * TILE_SIZE,
-        y: 21 * TILE_SIZE
+        x: 13 * TILE_SIZE,
+        y: 8 * TILE_SIZE
     },
     direction: {
         x: -1,
@@ -118,8 +118,8 @@ const ghost2InitialState = {
 
 const ghost3InitialState = {
     position: {
-        x: 1 * TILE_SIZE,
-        y: 15 * TILE_SIZE
+        x: 13 * TILE_SIZE,
+        y: 13 * TILE_SIZE
     },
     direction: {
         x: 1,
@@ -129,8 +129,8 @@ const ghost3InitialState = {
 
 const ghost4InitialState = {
     position: {
-        x: 19 * TILE_SIZE,
-        y: 15 * TILE_SIZE
+        x: 7 * TILE_SIZE,
+        y: 13 * TILE_SIZE
     },
     direction: {
         x: -1,

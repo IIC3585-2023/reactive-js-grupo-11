@@ -102,7 +102,7 @@ export const collisionPlayerGhost = (player, ghosts) => {
 export const resolveShootEvents = ([ticker, ...shootStreams], gameState) => {
     let projectiles = shootStreams.map((shootStream, idx) => {
         if(shootStream.type !== "keydown") return false;
-        if(gameState.players[idx].shootCooldown !== 0) return false
+        if(gameState.players[idx].shootCooldown !== 0 || gameState.players[idx].state === 'dead') return false
         const newPosition = {}
         gameState.players[idx].shootCooldown = SHOOT_COOLDOWN;
         newPosition.x = gameState.players[idx].direction.x*TILE_SIZE + gameState.players[idx].position.x
